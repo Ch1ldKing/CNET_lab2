@@ -1,5 +1,5 @@
 import socket
-from lab2.utils.timer import Timer
+from lab2.utils.time_model import Timer  # Import the Timer class directly from the module
 SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 9204
 BUFFER_SIZE =  1024
@@ -22,7 +22,8 @@ def send():
             print("发送数据包", nextseq)
             nextseq += 1
             if nextseq == base:
-
+                timer = Timer(TIMEOUT)
+                timer.start()
                 
         
         ack_data , _ = sendsocket.recvfrom(BUFFER_SIZE)
