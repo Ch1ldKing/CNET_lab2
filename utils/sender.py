@@ -1,5 +1,5 @@
 import socket
-from lab2.utils.time_model import Timer  # Import the Timer class directly from the module
+from lab2.utils.time_model import  # Import the Timer class directly from the module
 SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 9204
 BUFFER_SIZE =  1024
