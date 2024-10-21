@@ -72,6 +72,7 @@ class Sender:
         self.socket.close()
 
 
+
 def packetize_bytes(bytes_data):
     """
     将字节数据分块为固定长度的数据包
@@ -103,7 +104,7 @@ def packetize_message(message):
         chunk = message[i : i + 8]  # 获取当前分片
         if len(chunk) < 8:
             chunk = chunk.ljust(8)  # 用空格填充至8字节
-        flag = 0x0001 if seq == total_packets - 1 else 0x0000
+        flag = 0x0011 if seq == total_packets - 1 else 0x0010
         # 构造数据包：Seq (2字节) + Data (8字节)
         packet = seq.to_bytes(2, "big") + flag.to_bytes(2, "big") + chunk.encode()
         packets.append(packet)

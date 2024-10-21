@@ -1,8 +1,7 @@
 import socket
 import threading
 import sys
-import signal
-
+import datetime
 sys.path.append("../package/")
 
 SERVER_HOST = "127.0.0.1"
@@ -61,19 +60,23 @@ class Receiver:
 
 
     def reassemble_message(self):
-        """重组所有数据包为完整字节数据并保存为txt文件"""
+        """重组所有数据包为完整字节数据并保存为以时间戳命名的txt文件"""
         self.message_bytes = b"".join(
             self.received_packets[seq] for seq in sorted(self.received_packets)
         )
         print(f"重组后的完整字节数据: {self.message_bytes}")
 
+        # 获取当前时间戳并生成文件名
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"received_message_{timestamp}.txt"
+
         # 将字节数据解码为字符串并写入txt文件
-        with open("received_message.txt", "w", encoding="utf-8") as f:
-            message = self.message_bytes.decode("utf-8").rstrip('\x00')
+        with open(filename, "w", encoding="utf-8") as f:
+            message = self.message_bytes.decode("utf-8").rstrip("\x00")
             print(f"消息内容: {message}")
             message = message.replace("\r\n", "\n")
             f.write(message)
-        print("消息已保存为 received_message.txt")
+        print(f"消息已保存为 {filename}")
 
         # 重置状态以接收下一条消息
         self.received_packets.clear()
@@ -87,6 +90,7 @@ class Receiver:
 
     def __del__(self):
         self.close()
+
 
 def start_receiver():
     receiver = Receiver(9204)
