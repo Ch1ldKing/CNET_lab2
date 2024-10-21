@@ -13,9 +13,10 @@ WINDOW_SIZE = 4
 TIMEOUT = 2
 
 class Sender:
-    def __init__(self, data):
+    def __init__(self, port, data):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.packets = packetize_bytes(data)
+        self.port = port    
         self.base = 0  # 窗口起点
         self.nextseq = 0  # 下一个要发送的序列号
         self.window_size = WINDOW_SIZE
@@ -25,16 +26,16 @@ class Sender:
     def send(self):
 
         print("发送端启动")
-
+        print(self.packets)
         while self.base < len(self.packets):
             while (
                 self.nextseq < len(self.packets) and self.nextseq < self.base + WINDOW_SIZE
             ):
-                if random.random() < 0.5:  # 假设丢包概率为 50%
-                    self.socket.sendto(self.packets[self.nextseq], (SERVER_HOST, SERVER_PORT))
-                    print("发送数据包", self.nextseq)
-                else:
-                    print("丢弃数据包", self.nextseq)
+                # if random.random() < 0.8:  # 假设丢包概率为 50%
+                self.socket.sendto(self.packets[self.nextseq], (SERVER_HOST, self.port))
+                print("发送数据包", self.nextseq)
+                # else:
+                #     print("丢弃数据包", self.nextseq)
                 if self.nextseq == self.base:
                     self.timer.start()
                 self.nextseq += 1
@@ -62,7 +63,7 @@ class Sender:
 
             for seq in range(self.base, self.nextseq):
                 packet = self.packets[seq]
-                self.socket.sendto(packet, (SERVER_HOST, SERVER_PORT))
+                self.socket.sendto(packet, (SERVER_HOST, self.port))
                 print(f"重传数据包: Seq = {seq}")
 
             self.timer.start()  # 重启计时器
@@ -85,7 +86,7 @@ def packetize_bytes(bytes_data):
         chunk = bytes_data[i : i + 8]  # 每次读取8字节内容
         if len(chunk) < 8:
             chunk = chunk.ljust(8, b"\0")  # 用\0填充至8字节
-        flag = 0x0001 if i + 8 >= total_size else 0x0000
+        flag = 0x0011 if i + 8 >= total_size else 0x0010
         # 构造数据包：Seq (2字节) + Flag (2字节) + Data (8字节)
         packet = seq.to_bytes(2, "big") + flag.to_bytes(2, "big") + chunk
         packets.append(packet)

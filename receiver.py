@@ -40,11 +40,11 @@ class Receiver:
             if seq == self.expected_seq:
                 self.received_packets[seq] = data
                 self.expected_seq += 1
+                if flag == 0x0011:  # 检测是否为最后一个包
+                    self.last_packet_received = True
             else:
                 print(f"收到重复数据包: Seq = {seq}")
 
-            if flag == 0x0001:  # 检测是否为最后一个包
-                self.last_packet_received = True
 
             ack = self.expected_seq - 1
             if ack >= 0:
@@ -68,13 +68,13 @@ class Receiver:
 
         # 获取当前时间戳并生成文件名
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"received_message_{timestamp}.txt"
+        filename = f"downloaded_message_{timestamp}.txt"
 
         # 将字节数据解码为字符串并写入txt文件
         with open(filename, "w", encoding="utf-8") as f:
             message = self.message_bytes.decode("utf-8").rstrip("\x00")
             print(f"消息内容: {message}")
-            message = message.replace("\r\n", "\n")
+            message = message.replace("\r\n", "\n")  
             f.write(message)
         print(f"消息已保存为 {filename}")
 
