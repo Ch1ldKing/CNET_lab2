@@ -1,0 +1,14 @@
+2.6 EXTENDED CONTROL REGISTERS (INCLUDING XCR0)
+If CPUID.01H:ECX.XSAVE[bit 26] is 1, the processor supports one or more extended control registers (XCRs).
+Currently, the only such register defined is XCR0. This register specifies the set of processor states that the operating system enables on that processor, e.g. x87 FPU state, SSE state, AVX state, and other processor extended
+states that Intel 64 architecture may introduce in the future. The OS programs XCR0 to reflect the features it
+supports.
+Software can access XCR0 only if CR4.OSXSAVE[bit 18] = 1. (This bit is also readable as
+CPUID.01H:ECX.OSXSAVE[bit 27].) The layout of XCR0 is architected to allow software to use CPUID leaf function
+0DH to enumerate the set of bits that the processor supports in XCR0 (see CPUID instruction in Intel® 64 and
+IA-32 Architectures Software Developer’s Manual, Volume 2A). Each processor state (X87 FPU state, SSE state,
+AVX state, or a future processor extended state) is represented by a bit in XCR0. The OS can enable future
+processor extended states in a forward manner by specifying the appropriate bit mask value using the XSETBV
+instruction according to the results of the CPUID leaf 0DH.
+With the exception of bi
+(see XSAVE instruction in Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 2B).

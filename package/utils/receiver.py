@@ -13,6 +13,7 @@ class Receiver:
         self.expected_seq = 0
         self.received_packets = {}  
         self.last_packet_received = False
+        
     def receive(self):
         print("接收端启动")
         while True:

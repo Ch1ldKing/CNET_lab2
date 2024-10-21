@@ -1,4 +1,4 @@
-from package.utils.receiver import startReciver
-from package.utils.sender import startSender
+from package.receiver import startReciver
+from package.sender import startSender
 import time
 
